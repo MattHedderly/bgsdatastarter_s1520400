@@ -15,28 +15,40 @@ package com.example.bgsdatastarter_s1520400;
 
 // Update the package name to include your Student Identifier
 
+import android.R.layout;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import org.xmlpull.v1.XmlPullParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.Buffer;
+import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements OnClickListener
-{
+public class MainActivity extends AppCompatActivity{
+
+    private static final String TAG = "MainActivity";
+
     private TextView rawDataDisplay;
-    private Button startButton;
-    private String result;
-    private String url1="";
+    private ListView listView1;
     private String urlSource="http://quakes.bgs.ac.uk/feeds/MhSeismology.xml";
+    private List earthquakes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -45,86 +57,71 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
         setContentView(R.layout.activity_main);
         // Set up the raw links to the graphical components
         rawDataDisplay = (TextView)findViewById(R.id.rawDataDisplay);
-        startButton = (Button)findViewById(R.id.startButton);
-        startButton.setOnClickListener(this);
+        ListView listView = (ListView) findViewById(R.id.listView1);
 
-        // More Code goes here
+        Log.d(TAG, "onCreate: starting AsyncTask ");
+
+        DownloadXml downloadXml = new DownloadXml();
+        downloadXml.execute(urlSource);
+        Log.d(TAG, "onCreate: done");
+
+
     }
 
-    public void onClick(View aview)
-    {
-        startProgress();
-    }
+        //inner class for Async XML task
+    private class DownloadXml extends AsyncTask<String, Void, String>{
+            private static final String TAG = "DownloadXml";
 
-    public void startProgress()
-    {
-        // Run network access on a separate thread;
-        new Thread(new Task(urlSource)).start();
-    } //
-
-    // Need separate thread to access the internet resource over network
-    // Other neater solutions should be adopted in later iterations.
-    private class Task implements Runnable
-    {
-        private String url;
-
-        public Task(String aurl)
-        {
-            url = aurl;
-        }
-        @Override
-        public void run()
-        {
-
-            URL aurl;
-            URLConnection yc;
-            BufferedReader in = null;
-            String inputLine = "";
-
-
-            Log.e("MyTag","in run");
-
-            try
-            {
-                Log.e("MyTag","in try");
-                aurl = new URL(url);
-                yc = aurl.openConnection();
-                in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-                //
-                // Throw away the first 2 header lines before parsing
-                //
-                //
-                //
-                while ((inputLine = in.readLine()) != null)
-                {
-                    result = result + inputLine;
-                    Log.e("MyTag",inputLine);
-
-                }
-                in.close();
-            }
-            catch (IOException ae)
-            {
-                Log.e("MyTag", "ioexception");
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                Log.d(TAG, "onPostExecute: parameter is " + s);
             }
 
-            //
-            // Now that you have the xml data you can parse it
-            //
-
-            // Now update the TextView to display raw XML data
-            // Probably not the best way to update TextView
-            // but we are just getting started !
-
-            MainActivity.this.runOnUiThread(new Runnable()
-            {
-                public void run() {
-                    Log.d("UI thread", "I am the UI thread");
-                    rawDataDisplay.setText(result);
+            //method for getting the XML
+            @Override
+            protected String doInBackground(String... strings) {
+                Log.d(TAG, "doInBackground: starts with " + strings[0]);
+                String xmlDocument = downloadXML(strings[0]);
+                if(xmlDocument == null){
+                    Log.e(TAG, "doInBackground: Error downloading XML");
                 }
-            });
-        }
+                return xmlDocument;
+            }
 
+            private String downloadXML(String urlPath){
+                StringBuilder xmlResult = new StringBuilder();
+
+                try{
+                    URL url = new URL(urlPath);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                    //get the response code and log it
+                    int response = connection.getResponseCode();
+                    Log.d(TAG, "downloadXML: the response code is " + response);
+
+                    //open the stream to get the data
+                    InputStream inputStream = connection.getInputStream();
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                    BufferedReader reader = new BufferedReader(inputStreamReader);
+
+                    //actually read the chars
+                    String xmlRead;
+                    while((xmlRead = reader.readLine()) != null){
+                        xmlResult.append(xmlRead);
+                        xmlResult.append('\n');
+                    }
+                    reader.close();
+
+                    //return the result as a string
+                    return xmlResult.toString();
+
+                } catch(MalformedURLException e){
+                    Log.e(TAG, "downloadXML: Invalid URL " + e.getMessage() );
+                }catch(IOException e){
+                    Log.e(TAG, "downloadXML: IO Exception reading the data " + e.getMessage() );
+                }
+                return null;
+            }
     }
-
 }
