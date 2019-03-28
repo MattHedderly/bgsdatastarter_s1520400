@@ -1,72 +1,88 @@
 package com.example.bgsdatastarter_s1520400;
 
 import android.util.Log;
-import android.util.Xml;
 
 import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import java.io.IOException;
 import java.io.StringReader;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.XMLFormatter;
+import java.util.ArrayList;
 
 public class XmlPullParserHandler {
+    private static final String TAG = "XmlParser";
+    private ArrayList<Earthquake> earthquakes;
 
-    public List<Earthquake> earthquakes = new LinkedList<Earthquake>();
-    //the tags i need are earthquake pubdate geo:lat geo:long
+    public XmlPullParserHandler() {
+        this.earthquakes = new ArrayList<>();
+    }
 
-    public LinkedList<Earthquake> parseData(String rawData){
-        Earthquake earthquake = null;
+    public ArrayList<Earthquake> getEarthquakes() {
+        return earthquakes;
+    }
 
+    public boolean parseXml(String xmlRead){
+        boolean status = true;
+        Earthquake currentRecord = null;
+        boolean inItem = false;
+        String tagValue = "";
 
         try{
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
-            XmlPullParser xParse = factory.newPullParser();
-            xParse.setInput(new StringReader(rawData));
-            int eventType = xParse.getEventType();
-            while(eventType != XmlPullParser.END_DOCUMENT){
-                if(eventType == XmlPullParser.START_TAG){
-                        if(xParse.getName().equalsIgnoreCase("item")){
-                            Log.e("my tag", "start tag found");
-                            earthquake = new Earthquake();
-                    }else
-                        if(xParse.getName().equalsIgnoreCase("title")){
-                            String tempString = xParse.nextText();
-                            earthquake.setLocation(tempString);
-                    }else
-                        if(xParse.getName().equalsIgnoreCase("pubDate")){
-                            String tempString = xParse.nextText();
-                            earthquake.setDate(tempString);
-                        } else
-                            if(xParse.getName().equalsIgnoreCase("geo:lat")){
-                                String temp = xParse.nextText();
-                                earthquake.setLatitude(temp);
-                            }else
-                                if(xParse.getName().equalsIgnoreCase("geo:lon")){
-                                String temp = xParse.nextText();
-                                earthquake.setLongitude(temp);
-                            }
-                            else if(eventType == XmlPullParser.END_TAG) {
-                                    if (xParse.getName().equalsIgnoreCase("item")) {
-                                        earthquakes.add(earthquake);
-                                    }
+            XmlPullParser xPullParse = factory.newPullParser();
+            xPullParse.setInput(new StringReader(xmlRead));
+            int eventType = xPullParse.getEventType();
+            while (eventType != XmlPullParser.END_DOCUMENT){
+                String tagName = xPullParse.getName();
+                switch (eventType){
+                    case XmlPullParser.START_TAG:
+                        Log.d(TAG, "parseXml: Starting tag for" + tagName);
+                        if ("item".equalsIgnoreCase(tagName)){
+                            inItem = true;
+                            currentRecord = new Earthquake();
+                        }
+                        break;
+
+                    case XmlPullParser.TEXT:
+                        tagValue = xPullParse.getText();
+                        break;
+
+                    case XmlPullParser.END_TAG:
+                        Log.d(TAG, "parseXml: Ending tag for " + tagName);
+                        if (inItem){
+                            if ("item".equalsIgnoreCase(tagName)){
+                                earthquakes.add(currentRecord);
+                                inItem = false;
                                 }
-                                eventType =xParse.next();
+                            else if ("pubDate".equalsIgnoreCase(tagName)){
+                                currentRecord.setDate(tagValue);
+                            }else if("description".equalsIgnoreCase(tagName)){
+                                String[] parts = tagValue.split(";");
+                                currentRecord.setLocation(parts[1]);
+                                currentRecord.setLatitude(parts[0]);
+                            }else if ("geo:long".equalsIgnoreCase(tagValue)){
+                                currentRecord.setLongitude(tagValue);
+                            }
+                        }
+                        break;
 
-                }}
-                return (LinkedList<Earthquake>) earthquakes;
-            }catch (XmlPullParserException ae1){
-            Log.e("myTag", "parsing error" + ae1.toString());
+                        default:
+                }
+                eventType = xPullParse.next();
 
-        }catch(IOException ae1){
-            Log.e("myTag", "IO error due to parsing");
+            }
+
+            //test the parse loop
+            for (Earthquake app: earthquakes){
+                Log.d(TAG, "**************");
+                Log.d(TAG, app.toString());
+            }
+
+        }catch(Exception e){
+            status = false;
+            e.printStackTrace();
         }
-        Log.e("my tag", "end document");
-        return (LinkedList<Earthquake>) earthquakes;
+        return status;
 
 
     }

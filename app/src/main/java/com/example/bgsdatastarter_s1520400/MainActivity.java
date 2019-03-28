@@ -76,6 +76,9 @@ public class MainActivity extends AppCompatActivity{
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 Log.d(TAG, "onPostExecute: parameter is " + s);
+
+                XmlPullParserHandler xmlPullParserHandler = new XmlPullParserHandler();
+                xmlPullParserHandler.parseXml(s);
             }
 
             //method for getting the XML
