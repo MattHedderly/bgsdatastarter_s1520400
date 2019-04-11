@@ -34,11 +34,15 @@ public class QuakeAdapter extends ArrayAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        //improve memory performance by reusing the views that are scrolled off the screen instead of creating new
+        //if it's not got any create a new view
+        if(convertView == null){
+            convertView = layoutInflater.inflate(layoutResource, parent,false);
+        }
 
-        View view = layoutInflater.inflate(layoutResource, parent,false);
-        TextView location = (TextView) view.findViewById(R.id.textLocation);
-        TextView date = (TextView) view.findViewById(R.id.textDate);
-        TextView magnitude = (TextView) view.findViewById(R.id.textMagnitude);
+        TextView location = (TextView) convertView.findViewById(R.id.textLocation);
+        TextView date = (TextView) convertView.findViewById(R.id.textDate);
+        TextView magnitude = (TextView) convertView.findViewById(R.id.textMagnitude);
 
         Earthquake currentQuake = earthquakes.get(position);
 
@@ -51,6 +55,6 @@ public class QuakeAdapter extends ArrayAdapter {
         date.setText(currentQuake.getDate());
         magnitude.setText(currentQuake.getMagnitude());
 
-        return view;
+        return convertView;
     }
 }
