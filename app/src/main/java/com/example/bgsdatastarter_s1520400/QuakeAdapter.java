@@ -34,15 +34,19 @@ public class QuakeAdapter extends ArrayAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
+        ViewHolder viewHolder;
         //improve memory performance by reusing the views that are scrolled off the screen instead of creating new
         //if it's not got any create a new view
         if(convertView == null){
             convertView = layoutInflater.inflate(layoutResource, parent,false);
+
+            viewHolder = new ViewHolder(convertView);
+            convertView.setTag(viewHolder);
+        }else{
+            viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        TextView location = (TextView) convertView.findViewById(R.id.textLocation);
-        TextView date = (TextView) convertView.findViewById(R.id.textDate);
-        TextView magnitude = (TextView) convertView.findViewById(R.id.textMagnitude);
 
         Earthquake currentQuake = earthquakes.get(position);
 
@@ -51,10 +55,23 @@ public class QuakeAdapter extends ArrayAdapter {
         Log.d(TAG, "getView: location of quake is " + currentQuake.getLocation());
 
         //set the attributes I want for the home view
-        location.setText(currentQuake.getLocation());
-        date.setText(currentQuake.getDate());
-        magnitude.setText(currentQuake.getMagnitude());
+        viewHolder.location.setText(currentQuake.getLocation());
+        viewHolder.date.setText(currentQuake.getDate());
+        viewHolder.magnitude.setText(currentQuake.getMagnitude());
 
         return convertView;
+    }
+
+    //set up view holder pattern to improve efficiency
+    private class ViewHolder{
+        final TextView location;
+        final TextView date;
+        final TextView magnitude;
+
+        ViewHolder(View v){
+            this.location = v.findViewById(R.id.textLocation);
+            this.date = v.findViewById(R.id.textDate);
+            this.magnitude = v.findViewById(R.id.textMagnitude);
+        }
     }
 }
