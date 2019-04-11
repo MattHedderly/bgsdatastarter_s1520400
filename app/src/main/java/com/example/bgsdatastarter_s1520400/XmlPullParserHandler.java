@@ -58,13 +58,29 @@ public class XmlPullParserHandler {
                                 currentRecord.setDate(tagValue);
                             }else if("description".equalsIgnoreCase(tagName)){
                                 String[] parts = tagValue.split(";");
+
+                                //further parse the location to drop the identifier
                                 String[] locationParse = parts[1].split(":");
                                 currentRecord.setLocation(locationParse[1]);
 
+
+                                //further split the lat/long to drop identifier
                                 String[] latLongParse = parts[2].split(":");
+
+                                //further parse to split the lat and long
                                 String[] latLonSplit = latLongParse[1].split(",");
+
+                                //set lat/long from new array (could perhaps have done this with a regex but couldn't get it working)
                                 currentRecord.setLatitude(latLonSplit[0]);
                                 currentRecord.setLongitude(latLonSplit[1]);
+
+                                //further parse and set depth
+                                String[] depthSplit = parts[3].split(":");
+                                currentRecord.setDepth(depthSplit[1]);
+
+                                //set the magnitude
+                                String[] magSplit = parts[4].split(":");
+                                currentRecord.setMagnitude(magSplit[1]);
 
                             }
                         }

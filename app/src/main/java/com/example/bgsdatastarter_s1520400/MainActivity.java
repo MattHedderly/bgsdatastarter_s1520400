@@ -45,8 +45,7 @@ public class MainActivity extends AppCompatActivity{
 
     private static final String TAG = "MainActivity";
 
-    private TextView rawDataDisplay;
-    private ListView listView1;
+    private ListView listQuakes;
     private String urlSource="http://quakes.bgs.ac.uk/feeds/MhSeismology.xml";
     private List earthquakes;
 
@@ -56,8 +55,7 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // Set up the raw links to the graphical components
-        rawDataDisplay = (TextView)findViewById(R.id.rawDataDisplay);
-        ListView listView = (ListView) findViewById(R.id.listView1);
+        listQuakes = (ListView) findViewById(R.id.homeListView);
 
         Log.d(TAG, "onCreate: starting AsyncTask ");
 
@@ -79,6 +77,10 @@ public class MainActivity extends AppCompatActivity{
 
                 XmlPullParserHandler xmlPullParserHandler = new XmlPullParserHandler();
                 xmlPullParserHandler.parseXml(s);
+
+                //set up the array adapter to populate listview
+                ArrayAdapter<Earthquake> arrayAdapter = new ArrayAdapter<Earthquake>(MainActivity.this, R.layout.list_item, xmlPullParserHandler.getEarthquakes());
+                listQuakes.setAdapter(arrayAdapter);
             }
 
             //method for getting the XML

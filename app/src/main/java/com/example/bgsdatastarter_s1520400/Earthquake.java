@@ -6,6 +6,8 @@ public class Earthquake {
     private String date;
     private String latitude;
     private String longitude;
+    private String magnitude;
+    private String depth;
 
     public String getLocation() {
         return location;
@@ -27,6 +29,22 @@ public class Earthquake {
         return latitude;
     }
 
+    public String getMagnitude() {
+        return magnitude;
+    }
+
+    public void setMagnitude(String magnitude) {
+        this.magnitude = magnitude;
+    }
+
+    public String getDepth() {
+        return depth;
+    }
+
+    public void setDepth(String depth) {
+        this.depth = depth;
+    }
+
     public void setLatitude(String latitude) {
         this.latitude = latitude;
     }
@@ -44,6 +62,8 @@ public class Earthquake {
         return  "location=" + location + '\n' +
                 ", date=" + date + '\n' +
                 ", latitude=" + latitude + '\n' +
-                ", longitude=" + longitude + '\n';
+                ", longitude=" + longitude + '\n' +
+                ", magnitude=" + magnitude + '\n' +
+                ", depth=" + depth + '\n';
     }
 }
