@@ -62,8 +62,6 @@ public class MainActivity extends AppCompatActivity{
                 xmlPullParserHandler.parseXml(s);
 
                 //set up the array adapter to populate listview
-                //ArrayAdapter<Earthquake> arrayAdapter = new ArrayAdapter<Earthquake>(MainActivity.this, R.layout.list_item, xmlPullParserHandler.getEarthquakes());
-                //listQuakes.setAdapter(arrayAdapter);
                 QuakeAdapter quakeAdapter = new QuakeAdapter(MainActivity.this, R.layout.list_earthquake , xmlPullParserHandler.getEarthquakes());
                 listQuakes.setAdapter(quakeAdapter);
             }

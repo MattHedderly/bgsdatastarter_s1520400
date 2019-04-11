@@ -42,8 +42,11 @@ public class QuakeAdapter extends ArrayAdapter {
 
         Earthquake currentQuake = earthquakes.get(position);
 
+
+        //check the scroller is working
         Log.d(TAG, "getView: location of quake is " + currentQuake.getLocation());
 
+        //set the attributes I want for the home view
         location.setText(currentQuake.getLocation());
         date.setText(currentQuake.getDate());
         magnitude.setText(currentQuake.getMagnitude());
