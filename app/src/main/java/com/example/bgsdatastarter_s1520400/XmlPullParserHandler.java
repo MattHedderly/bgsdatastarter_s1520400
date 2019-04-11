@@ -58,10 +58,14 @@ public class XmlPullParserHandler {
                                 currentRecord.setDate(tagValue);
                             }else if("description".equalsIgnoreCase(tagName)){
                                 String[] parts = tagValue.split(";");
-                                currentRecord.setLocation(parts[1]);
-                                currentRecord.setLatitude(parts[0]);
-                            }else if ("geo:long".equalsIgnoreCase(tagValue)){
-                                currentRecord.setLongitude(tagValue);
+                                String[] locationParse = parts[1].split(":");
+                                currentRecord.setLocation(locationParse[1]);
+
+                                String[] latLongParse = parts[2].split(":");
+                                String[] latLonSplit = latLongParse[1].split(",");
+                                currentRecord.setLatitude(latLonSplit[0]);
+                                currentRecord.setLongitude(latLonSplit[1]);
+
                             }
                         }
                         break;
