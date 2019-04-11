@@ -1,5 +1,10 @@
 package com.example.bgsdatastarter_s1520400;
 
+// Name                 Matt Hedderly
+// Student ID           S1520400
+// Programme of Study   Computing
+
+
 
 public class Earthquake {
     private String location;
@@ -59,11 +64,11 @@ public class Earthquake {
 
     @Override
     public String toString() {
-        return  "location=" + location + '\n' +
-                ", date=" + date + '\n' +
-                ", latitude=" + latitude + '\n' +
-                ", longitude=" + longitude + '\n' +
-                ", magnitude=" + magnitude + '\n' +
-                ", depth=" + depth + '\n';
+        return  " location=" + location + '\n' +
+                " date=" + date + '\n' +
+                " latitude=" + latitude + '\n' +
+                " longitude=" + longitude + '\n' +
+                " magnitude=" + magnitude + '\n' +
+                " depth=" + depth + '\n';
     }
 }

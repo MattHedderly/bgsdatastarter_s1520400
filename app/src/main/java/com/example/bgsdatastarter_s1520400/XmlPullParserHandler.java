@@ -1,5 +1,10 @@
 package com.example.bgsdatastarter_s1520400;
 
+// Name                 Matt Hedderly
+// Student ID           S1520400
+// Programme of Study   Computing
+
+
 import android.util.Log;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -61,7 +66,7 @@ public class XmlPullParserHandler {
 
                                 //further parse the location to drop the identifier
                                 String[] locationParse = parts[1].split(":");
-                                currentRecord.setLocation(locationParse[1]);
+                                currentRecord.setLocation(locationParse[1].trim());
 
 
                                 //further split the lat/long to drop identifier
@@ -92,7 +97,7 @@ public class XmlPullParserHandler {
 
             }
 
-            //test the parse loop
+            //test the parse loop example from Udemy.com
             for (Earthquake app: earthquakes){
                 Log.d(TAG, "**************");
                 Log.d(TAG, app.toString());

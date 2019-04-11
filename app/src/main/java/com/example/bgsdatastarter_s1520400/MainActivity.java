@@ -1,33 +1,18 @@
 package com.example.bgsdatastarter_s1520400;
 
 
-/*  Starter project for Mobile Platform Development in Semester B Session 2018/2019
-    You should use this project as the starting point for your assignment.
-    This project simply reads the data from the required URL and displays the
-    raw data in a TextField
-*/
-
-//
 // Name                 Matt Hedderly
 // Student ID           S1520400
 // Programme of Study   Computing
-//
 
-// Update the package name to include your Student Identifier
 
-import android.R.layout;
+
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import org.xmlpull.v1.XmlPullParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,8 +21,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.nio.Buffer;
 import java.util.List;
 
 
@@ -79,8 +62,10 @@ public class MainActivity extends AppCompatActivity{
                 xmlPullParserHandler.parseXml(s);
 
                 //set up the array adapter to populate listview
-                ArrayAdapter<Earthquake> arrayAdapter = new ArrayAdapter<Earthquake>(MainActivity.this, R.layout.list_item, xmlPullParserHandler.getEarthquakes());
-                listQuakes.setAdapter(arrayAdapter);
+                //ArrayAdapter<Earthquake> arrayAdapter = new ArrayAdapter<Earthquake>(MainActivity.this, R.layout.list_item, xmlPullParserHandler.getEarthquakes());
+                //listQuakes.setAdapter(arrayAdapter);
+                QuakeAdapter quakeAdapter = new QuakeAdapter(MainActivity.this, R.layout.list_earthquake , xmlPullParserHandler.getEarthquakes());
+                listQuakes.setAdapter(quakeAdapter);
             }
 
             //method for getting the XML
